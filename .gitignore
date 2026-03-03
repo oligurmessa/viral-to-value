@@ -1,0 +1,19 @@
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.DS_Store
+*.duckdb
+
+# large generated files (re-create with: python src/generate_data.py && python src/clean_data.py)
+data/raw/sessions.csv
+data/processed/sessions.csv
+data/processed/orders.csv
+data/processed/customers.csv
+data/processed/customer_value.csv
+data/processed/customer_features.csv
+data/processed/sql_customer_ltv.csv
+data/simulation/customer_latent_truth.csv
+
+# Power BI extracts (re-create with: python src/export_powerbi.py)
+powerbi/data/
