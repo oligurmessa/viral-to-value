@@ -1,0 +1,41 @@
+product_id,product_name,category,price,cogs,launch_date
+P001,Hoodie #1,Hoodies,88.95,33.39,2024-11-21
+P002,Hoodie #2,Hoodies,85.88,29.99,2025-05-10
+P003,Hoodie #3,Hoodies,97.01,38.79,2025-03-14
+P004,Hoodie #4,Hoodies,63.11,23.74,2025-04-11
+P005,Hoodie #5,Hoodies,72.82,30.03,2025-04-09
+P006,Hoodie #6,Hoodies,90.9,34.15,2025-02-13
+P007,Hoodie #7,Hoodies,67.08,25.77,2025-05-22
+P008,Hoodie #8,Hoodies,91.1,35.53,2024-06-26
+P009,T-shirt #9,T-shirts,41.64,12.13,2024-06-28
+P010,T-shirt #10,T-shirts,44.07,13.96,2025-06-24
+P011,T-shirt #11,T-shirts,31.49,9.38,2024-12-17
+P012,T-shirt #12,T-shirts,30.77,9.57,2024-06-18
+P013,T-shirt #13,T-shirts,41.4,13.58,2024-11-12
+P014,T-shirt #14,T-shirts,34.66,10.33,2024-10-09
+P015,T-shirt #15,T-shirts,31.4,8.72,2025-03-02
+P016,T-shirt #16,T-shirts,32.07,9.95,2024-12-08
+P017,Accessorie #17,Accessories,25.1,5.89,2025-02-07
+P018,Accessorie #18,Accessories,21.36,5.01,2025-03-08
+P019,Accessorie #19,Accessories,36.13,7.77,2025-05-26
+P020,Accessorie #20,Accessories,32.46,6.63,2024-09-24
+P021,Accessorie #21,Accessories,17.99,3.57,2025-04-15
+P022,Accessorie #22,Accessories,31.94,7.32,2025-04-11
+P023,Accessorie #23,Accessories,35.41,7.73,2024-12-20
+P024,Accessorie #24,Accessories,16.18,3.29,2025-01-14
+P025,Sneaker #25,Sneakers,161.78,83.64,2025-05-09
+P026,Sneaker #26,Sneakers,168.54,90.0,2025-01-13
+P027,Sneaker #27,Sneakers,153.74,80.89,2025-04-14
+P028,Sneaker #28,Sneakers,117.15,60.15,2024-09-30
+P029,Sneaker #29,Sneakers,130.01,66.37,2025-07-03
+P030,Gymwear #30,Gymwear,44.41,13.77,2025-05-08
+P031,Gymwear #31,Gymwear,46.12,15.03,2024-11-21
+P032,Gymwear #32,Gymwear,56.04,20.14,2025-02-20
+P033,Gymwear #33,Gymwear,59.91,19.99,2024-11-15
+P034,Gymwear #34,Gymwear,42.0,12.92,2025-04-22
+P035,Gymwear #35,Gymwear,39.23,13.93,2025-03-06
+P036,Limited Drop #36,Limited Drops,97.89,41.12,2025-05-01
+P037,Limited Drop #37,Limited Drops,97.17,42.41,2025-05-09
+P038,Limited Drop #38,Limited Drops,115.47,46.57,2025-04-27
+P039,Limited Drop #39,Limited Drops,135.41,55.3,2025-09-02
+P040,Limited Drop #40,Limited Drops,94.43,43.32,2025-01-27
