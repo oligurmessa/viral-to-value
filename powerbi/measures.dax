@@ -1,0 +1,95 @@
+// =====================================================================
+// Viral to Value — DAX measures (paste into a _Measures table)
+// Tables: dim_campaign, dim_customer, dim_product, dim_date,
+//         fact_orders, fact_sessions_daily
+// =====================================================================
+
+// ---------- Volume & revenue ----------
+Marketing Spend = SUM ( dim_campaign[spend] )
+Orders = COUNTROWS ( fact_orders )
+Gross Revenue = SUM ( fact_orders[gross_revenue] )
+Discounts = SUM ( fact_orders[discount_amount] )
+Net Revenue = SUM ( fact_orders[net_revenue] )
+COGS = SUM ( fact_orders[cogs] )
+Shipping Cost = SUM ( fact_orders[shipping_cost] )
+Payment Fees = SUM ( fact_orders[payment_fee] )
+Refunds = SUM ( fact_orders[refund_amount] )
+Contribution Margin = [Net Revenue] - [COGS] - [Shipping Cost] - [Payment Fees] - [Refunds]
+CM Margin % = DIVIDE ( [Contribution Margin], [Net Revenue] )
+Refund Rate = DIVIDE ( [Refunds], [Gross Revenue] )
+Discount Rate = DIVIDE ( [Discounts], [Gross Revenue] )
+AOV = DIVIDE ( [Net Revenue], [Orders] )
+
+// ---------- Acquisition ----------
+Customers Acquired = COUNTROWS ( dim_customer )
+Reach = SUM ( dim_campaign[reach] )
+Campaign Sessions = SUM ( fact_sessions_daily[sessions] )
+Sessions per 1k Reach = DIVIDE ( [Campaign Sessions], [Reach] ) * 1000
+CAC = DIVIDE ( [Marketing Spend], [Customers Acquired] )
+
+// first-week revenue: orders within 7 days of the acquiring campaign's date
+Revenue 7d =
+SUMX (
+    fact_orders,
+    VAR campDate = RELATED ( dim_campaign[campaign_date] )
+    RETURN IF ( DATEDIFF ( campDate, fact_orders[order_date], DAY ) <= 7, fact_orders[net_revenue], 0 )
+)
+ROAS 7d = DIVIDE ( [Revenue 7d], [Marketing Spend] )
+
+// ---------- Durability (from precomputed customer columns) ----------
+Repeat Rate 30d = AVERAGE ( dim_customer[repeat_30d] )
+Repeat Rate 60d = AVERAGE ( dim_customer[repeat_60d] )
+Repeat Rate 90d = AVERAGE ( dim_customer[repeat_90d] )
+Median Days to 2nd Order = MEDIAN ( dim_customer[days_to_second_order] )
+
+// ---------- LTV & unit economics ----------
+CM-LTV 90d = AVERAGE ( dim_customer[cm_90d] )
+Revenue per Customer 90d = AVERAGE ( dim_customer[net_revenue_90d] )
+CM 90d Total = SUM ( dim_customer[cm_90d] )
+LTV:CAC = DIVIDE ( [CM-LTV 90d], [CAC] )
+Profit 90d = [CM 90d Total] - [Marketing Spend]
+Median Payback Days = MEDIAN ( dim_campaign[payback_days] )
+
+LTV:CAC Status =
+SWITCH ( TRUE (),
+    ISBLANK ( [LTV:CAC] ), "n/a",
+    [LTV:CAC] < 1, "Below break-even",
+    [LTV:CAC] < 3, "Positive",
+    "Healthy (≥3x)"
+)
+
+// ---------- Virality slices ----------
+Viral Customers = CALCULATE ( [Customers Acquired], dim_campaign[is_viral] = 1 )
+Viral Share of Spend = DIVIDE ( CALCULATE ( [Marketing Spend], dim_campaign[is_viral] = 1 ), [Marketing Spend] )
+Viral Share of CM 90d = DIVIDE ( CALCULATE ( [CM 90d Total], dim_campaign[is_viral] = 1 ), [CM 90d Total] )
+Viral CAC = CALCULATE ( [CAC], dim_campaign[is_viral] = 1 )
+Non-Viral CAC = CALCULATE ( [CAC], dim_campaign[is_viral] = 0 )
+Viral CM-LTV 90d = CALCULATE ( [CM-LTV 90d], dim_campaign[is_viral] = 1 )
+Non-Viral CM-LTV 90d = CALCULATE ( [CM-LTV 90d], dim_campaign[is_viral] = 0 )
+
+// ---------- Cohort retention matrix (Page 3) ----------
+// rows: dim_customer[acquisition_month]; columns: months since acquisition (0..5) from a disconnected table 'MonthsSince'
+Retention % =
+VAR k = SELECTEDVALUE ( MonthsSince[k] )
+VAR cohortSize = [Customers Acquired]
+VAR active =
+    CALCULATE (
+        DISTINCTCOUNT ( fact_orders[customer_id] ),
+        FILTER (
+            fact_orders,
+            DATEDIFF ( RELATED ( dim_customer[acquisition_date] ), fact_orders[order_date], MONTH ) = k
+        )
+    )
+RETURN DIVIDE ( active, cohortSize )
+
+// ---------- Cumulative CM per customer by days since acquisition (Page 3 line) ----------
+// x-axis: disconnected table 'DaysSince'[d] (0..180)
+Cumulative CM per Customer =
+VAR d = MAX ( DaysSince[d] )
+VAR cm =
+    CALCULATE (
+        SUMX ( fact_orders,
+            fact_orders[net_revenue] - fact_orders[cogs] - fact_orders[shipping_cost] - fact_orders[payment_fee] - fact_orders[refund_amount] ),
+        FILTER ( fact_orders, DATEDIFF ( RELATED ( dim_customer[acquisition_date] ), fact_orders[order_date], DAY ) <= d )
+    )
+RETURN DIVIDE ( cm, [Customers Acquired] )
